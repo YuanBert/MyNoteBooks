@@ -29,7 +29,11 @@ namespace MotorTestPC
             dt.Columns.Add("TempertureValue",typeof(Int16));
             dt.Columns.Add("Date",System.Type.GetType("System.DateTime"));
 
+            trackBarYmax.Value = Convert.ToInt32(chart1.ChartAreas[0].AxisY.Maximum);
+            trackBarYlength.Value = Convert.ToInt32(chart1.ChartAreas[0].AxisY.Maximum - chart1.ChartAreas[0].AxisY.Minimum);
             buttonStart.Enabled = false;
+            trackBarYmax.Enabled = false;
+            trackBarYlength.Enabled = false;
             sUartName = SerialPort.GetPortNames();
             //foreach (string com in SerialPort.GetPortNames())
             //{
@@ -70,6 +74,8 @@ namespace MotorTestPC
                     serialPortOfSenser.Write("S");
                     buttonStart.Text = "停止";
                     button1.BackColor = Color.Red;
+                    trackBarYmax.Enabled = true;
+                    trackBarYlength.Enabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -98,6 +104,8 @@ namespace MotorTestPC
                     gTimeCnt = 0;
                     buttonStart.Text = "开始";
                     button1.BackColor = Color.Green;
+                    trackBarYmax.Enabled = false;
+                    trackBarYlength.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -154,10 +162,10 @@ namespace MotorTestPC
             dt.Rows.Add(iCurrentValue, tTempertureValue, DateTime.Now);
             if (dt.Rows.Count > 18000)
             {
-                this.BeginInvoke(new EventHandler(delegate
-                {
+                //this.BeginInvoke(new EventHandler(delegate
+                //{
                     dt.Rows.Clear();
-                }));
+               // }));
             }
 
 
@@ -217,6 +225,20 @@ namespace MotorTestPC
                 displayTempertureLineFlag = false;
                 chart1.Series[1].Points.Clear();
             }
+        }
+
+        private void trackBarYmax_ValueChanged(object sender, EventArgs e)
+        {
+            chart1.ChartAreas[0].AxisY.Maximum = trackBarYmax.Value;
+            chart1.ChartAreas[0].AxisY.Minimum = trackBarYmax.Value - trackBarYlength.Value;
+            textBox1.Text = trackBarYmax.Value.ToString();
+        }
+
+        private void trackBarYlength_ValueChanged(object sender, EventArgs e)
+        {
+            chart1.ChartAreas[0].AxisY.Maximum = trackBarYmax.Value;
+            chart1.ChartAreas[0].AxisY.Minimum = trackBarYmax.Value - trackBarYlength.Value;
+            textBox2.Text = trackBarYlength.Value.ToString();
         }
     }
 }
